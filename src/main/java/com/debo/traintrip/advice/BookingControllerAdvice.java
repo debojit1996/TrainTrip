@@ -21,7 +21,7 @@ public class BookingControllerAdvice {
     public ResponseEntity<Problem> handleException(ReservationFailedException exception) {
         log.error("ReservationFailedException occurred: ", exception);
 
-        Problem problem = this.constructProblem(exception.getMessage());
+        Problem problem = this.constructProblem(exception.getMessage(), exception.getProblemType());
         return this.getProblemResponseEntity(HttpStatus.BAD_REQUEST, problem);
     }
 
@@ -29,15 +29,19 @@ public class BookingControllerAdvice {
     public ResponseEntity<Problem> handleException(ResourceNotFoundException exception) {
         log.error("ResourceNotFoundException occurred: ", exception);
 
-        Problem problem = this.constructProblem(exception.getMessage());
+        Problem problem = this.constructProblem(exception.getMessage(), exception.getProblemType());
         return this.getProblemResponseEntity(HttpStatus.NOT_FOUND, problem);
     }
 
-    private Problem constructProblem(String message) {
-        return Problem.builder()
+    private Problem constructProblem(String message, String problemType) {
+        Problem problemObj = Problem.builder()
                 .problemId(UUID.randomUUID())
                 .problemDescription(message)
                 .build();
+        if (problemType != null) {
+            problemObj.setProblemType(problemType);
+        }
+        return problemObj;
     }
 
     private ResponseEntity<Problem> getProblemResponseEntity(HttpStatus status, Problem problem) {

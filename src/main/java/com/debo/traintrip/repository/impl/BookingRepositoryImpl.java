@@ -1,8 +1,13 @@
 package com.debo.traintrip.repository.impl;
 
+import static com.debo.traintrip.constants.BookingConstants.RESOURCE_NOT_FOUND;
+import static com.debo.traintrip.constants.BookingConstants.bookingIdToDetailsMap;
+import static com.debo.traintrip.constants.BookingConstants.trainIdToDetailsMap;
+import static com.debo.traintrip.constants.BookingConstants.userIdToBookingIdsMap;
+import static com.debo.traintrip.constants.BookingConstants.sourceDestToPriceMap;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,27 +26,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BookingRepositoryImpl implements BookingRepository {
 
-    private final Map<String, List<BookingDetails>> userIdToBookingDetailsMap = new HashMap<>();
-    private final Map<String, Integer> sourceDestToPriceMap = Map.of("London_France", 20);
 
-    private Map<String, TrainAndSeatDetails> trainIdToDeatilsMap = new HashMap<>(Map.of("LON_FRA_13456",
-            new TrainAndSeatDetails("LON_FRA_13456",
-                    new HashMap<>(Map.of(BookingConstants.TrainSection.A, 30,
-                            BookingConstants.TrainSection.B, 30)))));
 
     @Override
     public void saveBooking(BookingDetails bookingDetails) {
         // In actual implementation, we would have saved this detail in the database
-        userIdToBookingDetailsMap.computeIfAbsent(bookingDetails.getUserEmail(), k -> new ArrayList<>()).add(bookingDetails);
+        bookingIdToDetailsMap.put(bookingDetails.getBookingId(), bookingDetails);
+        // Also, update user-email to List of bookingId map. In Real world, this might be a separate table storing this info.
+        userIdToBookingIdsMap.computeIfAbsent(bookingDetails.getUserEmail(), k -> new ArrayList<>()).add(bookingDetails.getBookingId());
     }
 
     @Override
     public TrainAndSeatDetails getTrainAndSeatDetails(String trainNumber) {
         // Fetch seat availability and price from the database(in real application).
-        TrainAndSeatDetails trainAndSeatDetails = trainIdToDeatilsMap.getOrDefault(trainNumber,
+        TrainAndSeatDetails trainAndSeatDetails = trainIdToDetailsMap.getOrDefault(trainNumber,
                 new TrainAndSeatDetails());
         if (Objects.isNull(trainAndSeatDetails.getTrainNumber())) {
-            throw new ResourceNotFoundException("Train with number " + trainNumber + " doesn't exist");
+            throw new ResourceNotFoundException("Train with number " + trainNumber + " doesn't exist", RESOURCE_NOT_FOUND);
         }
         return trainAndSeatDetails;
     }
@@ -53,11 +54,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void updateTrainAndSeatDetails(String trainNumber, Map<BookingConstants.TrainSection, Integer> sectionWiseSeatCount) {
-        trainIdToDeatilsMap.put(trainNumber, TrainAndSeatDetails.builder()
+        trainIdToDetailsMap.put(trainNumber, TrainAndSeatDetails.builder()
                 .trainNumber(trainNumber)
                 .availableSeatCount(sectionWiseSeatCount)
+                .sectionSeatDetailsMap(trainIdToDetailsMap.get(trainNumber).getSectionSeatDetailsMap())
                 .build());
-        log.info("Updated trainId to details map: {}", trainIdToDeatilsMap);
+        log.info("Updated trainId to details map: {}", trainIdToDetailsMap);
     }
 
 }

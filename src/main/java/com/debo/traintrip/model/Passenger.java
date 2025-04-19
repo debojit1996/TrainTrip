@@ -11,8 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+public class Passenger {
     private String email; // can be used as an identifier
     private String firstName;
     private String lastName;
+    private int age;
+    private String gender;
 }

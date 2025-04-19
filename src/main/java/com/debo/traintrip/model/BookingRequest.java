@@ -1,6 +1,6 @@
 package com.debo.traintrip.model;
 
-import java.time.OffsetDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,8 @@ public class BookingRequest {
 
     private String from;
     private String to;
-    private User user;
+    private String loggedInUsername;
+    private List<Passenger> passengers;
     private String trainNumber;
     private String dateOfJourney; // declared it as a string for simplicity now
     private int numberOfSeats;
