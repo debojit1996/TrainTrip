@@ -32,5 +32,6 @@ public class BookingConstants {
     public static final String RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND";
     public static final String REQUIRED_FIELDS_MISSING = "REQUIRED_FIELDS_MISSING";
     public static final String INVALID_FIELD_VALUE = "INVALID_VALUE";
+    public static final String TRAIN_RESERVATION_FULL = "TRAIN_RESERVATION_FULL";
 
 }

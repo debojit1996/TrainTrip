@@ -20,9 +20,12 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BookingDetails {
     private String bookingId;
+    private String trainNumber;
     private String from;
     private String to;
     private String userEmail;
+    private int numberOfSeatsBooked;
     private int pricePaid;
-    private List<TrainBookingDetails> trainBookingDetails;
+    private TrainBookingDetails trainBookingDetails;
+    private String dateOfJourney;
 }

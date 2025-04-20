@@ -17,7 +17,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class TrainBookingDetails {
-    private String trainNumber;
     private Map<BookingConstants.TrainSection, Integer> sectionWiseSeatCount;
     private Map<BookingConstants.TrainSection, List<PassengerSeatDetails>> sectionWisePassengerSeatDetails;
 }
